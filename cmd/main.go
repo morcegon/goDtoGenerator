@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/morcegon/goDtoGenerator/pkg/files"
 )
@@ -20,8 +21,12 @@ func main() {
 		files.ScanFolder(providedPath)
 	}
 
-	fmt.Printf("%v files to be processed \n", len(files.Fp))
+	now := time.Now()
 	for _, file := range files.Fp {
 		fmt.Println(file.Name())
 	}
+
+	elapsed := time.Since(now)
+	fmt.Printf("\n\n%v files to be processed\n", len(files.Fp))
+	fmt.Printf("Spent %v", elapsed)
 }
