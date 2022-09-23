@@ -1,13 +1,14 @@
 package main
 
 import (
-	"dtoGenerator/pkg/dto"
 	"flag"
 	"fmt"
 	"io/fs"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+
+	"github.com/morcegon/goDtoGenerator/pkg/dto"
 )
 
 func main() {
