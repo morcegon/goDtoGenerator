@@ -1,6 +1,8 @@
 package main
 
 import (
+	"dtoGenerator/pkg/dto"
+	"flag"
 	"fmt"
 	"io/fs"
 	"io/ioutil"
@@ -9,26 +11,30 @@ import (
 )
 
 func main() {
-	providedPath := "dtoFolder"
-	filesToParse := []fs.FileInfo{}
+	var providedPath string
+	flag.StringVar(&providedPath, "path", "", "")
+	flag.Parse()
 
 	if isSingleFile(providedPath) {
-		fileInfo, _ := os.Lstat(providedPath)
-		filesToParse = append(filesToParse, fileInfo)
+		file, _ := os.Lstat(providedPath)
+		dto.Fp.AddFile(file)
 	} else {
-		filesToParse = scanFolder(providedPath)
+		scanFolder(providedPath)
+	}
+
+	fmt.Printf("%v files to be processed \n", len(dto.Fp))
+	for _, file := range dto.Fp {
+		fmt.Println(file.Name())
 	}
 }
 
-func scanFolder(folderPath string) []fs.FileInfo {
+func scanFolder(folderPath string) {
 	files, _ := ioutil.ReadDir(folderPath)
-	returnFiles := []fs.FileInfo{}
 	folderToScan := []fs.FileInfo{}
 
 	for _, file := range files {
 		if !file.IsDir() {
-			fmt.Println(file.Name())
-			returnFiles = append(returnFiles, file)
+			dto.Fp.AddFile(file)
 		} else {
 			folderToScan = append(folderToScan, file)
 		}
@@ -38,8 +44,6 @@ func scanFolder(folderPath string) []fs.FileInfo {
 		newFolderPath := filepath.Join(folderPath, folder.Name())
 		scanFolder(newFolderPath)
 	}
-
-	return returnFiles
 }
 
 func isSingleFile(filePath string) bool {
