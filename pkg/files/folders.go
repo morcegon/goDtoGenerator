@@ -1,25 +1,26 @@
 package files
 
 import (
-	"io/fs"
 	"io/ioutil"
-	"path/filepath"
+	"path"
 )
 
 func ScanFolder(folderPath string) {
-	files, _ := ioutil.ReadDir(folderPath)
-	folderToScan := []fs.FileInfo{}
+	folderFiles, _ := ioutil.ReadDir(folderPath)
+	arrayFolders := []string{}
 
-	for _, file := range files {
-		if !file.IsDir() {
-			Fp.AddFile(file)
-		} else {
-			folderToScan = append(folderToScan, file)
+	for _, fileInfo := range folderFiles {
+		completePath := path.Join(folderPath, fileInfo.Name())
+
+		if fileInfo.IsDir() {
+			arrayFolders = append(arrayFolders, completePath)
+			continue
 		}
+
+		FilesToParse.AddFile(fileInfo, completePath)
 	}
 
-	for _, folder := range folderToScan {
-		newFolderPath := filepath.Join(folderPath, folder.Name())
-		ScanFolder(newFolderPath)
+	for _, folder := range arrayFolders {
+		ScanFolder(folder)
 	}
 }

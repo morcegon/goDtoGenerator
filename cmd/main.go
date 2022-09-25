@@ -16,17 +16,17 @@ func main() {
 
 	if files.IsSingleFile(providedPath) {
 		file, _ := os.Lstat(providedPath)
-		files.Fp.AddFile(file)
+		files.FilesToParse.AddFile(file, providedPath)
 	} else {
 		files.ScanFolder(providedPath)
 	}
 
 	now := time.Now()
-	for _, file := range files.Fp {
-		fmt.Println(file.Name())
+	for _, file := range files.FilesToParse {
+		fmt.Println(file.Path)
 	}
 
 	elapsed := time.Since(now)
-	fmt.Printf("\n\n%v files to be processed\n", len(files.Fp))
+	fmt.Printf("\n\n%v files to be processed\n", len(files.FilesToParse))
 	fmt.Printf("Spent %v", elapsed)
 }

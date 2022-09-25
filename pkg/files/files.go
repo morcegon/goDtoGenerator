@@ -3,20 +3,34 @@ package files
 import (
 	"io/fs"
 	"os"
+	"path/filepath"
 )
 
-type filesToParse []fs.FileInfo
+type FileToParse struct {
+	FileInfo fs.FileInfo
+	Path     string
+}
 
-var Fp filesToParse
+type arrayFilesToParse []FileToParse
 
-func (fp *filesToParse) AddFile(file fs.FileInfo) error {
-	*fp = append(*fp, file)
+var FilesToParse arrayFilesToParse
+
+func (fp *arrayFilesToParse) AddFile(fileInfo fs.FileInfo, path string) error {
+	expectedExtension := ".json"
+	if filepath.Ext(path) == expectedExtension {
+		file := FileToParse{
+			fileInfo,
+			path,
+		}
+
+		*fp = append(*fp, file)
+	}
+
 	return nil
 }
 
 func IsSingleFile(filePath string) bool {
 	fileInfo, err := os.Lstat(filePath)
-
 	if err != nil {
 		panic(err.Error())
 	}
